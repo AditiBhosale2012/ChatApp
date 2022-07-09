@@ -6,6 +6,7 @@ import logo from "../../images/logo.png";
 import sendlogo from "../../images/send.png";
 import Message from "../Message/Message";
 import ReactScrollToBottom from "react-scroll-to-bottom";
+import closelogo from "../../images/closeIcon.png";
 
 let socket;
 const ENDPOINT = "http://localhost:4500/";
@@ -71,6 +72,7 @@ export const Chat = () => {
         <div className="header">
           <img src={logo} alt="logo"></img>
           <h2>women chat Room</h2>
+          <a href="/"> <img className="closel" src={closelogo} alt="Close" /></a>
         </div>
         <ReactScrollToBottom className="chatbox">
           {messages.map((item, i) => (

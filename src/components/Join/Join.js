@@ -19,7 +19,7 @@ function Join() {
         <h1>DocChat</h1>
         <input  onChange={(e) => setname(e.target.value)} type="text" id="joininput" placeholder="Enter your name" />
         <Link onClick={(event) => !name ? event.preventDefault() : null} to="/chat">
-          <button type="button" class="btn btn-outline-danger" onClick={setuser}>
+          <button type="button" className="btn btn-outline-danger" onClick={setuser}>
             Join Now
           </button>
         </Link>
