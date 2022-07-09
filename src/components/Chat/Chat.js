@@ -9,7 +9,7 @@ import ReactScrollToBottom from "react-scroll-to-bottom";
 import closelogo from "../../images/closeIcon.png";
 
 let socket;
-const ENDPOINT = "http://localhost:4500/";
+const ENDPOINT = "https://chatserver22.herokuapp.com/";
 
 export const Chat = () => {
   const [id, setid] = useState("");
