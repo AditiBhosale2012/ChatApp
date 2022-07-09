@@ -1,0 +1,97 @@
+import React, { useEffect, useState } from "react";
+import { user } from "../Join/Join";
+import socketIO, { io } from "socket.io-client";
+import "./Chat.css";
+import logo from "../../images/logo.png";
+import sendlogo from "../../images/send.png";
+import Message from "../Message/Message";
+import ReactScrollToBottom from "react-scroll-to-bottom";
+
+let socket;
+const ENDPOINT = "http://localhost:4500/";
+
+export const Chat = () => {
+  const [id, setid] = useState("");
+  const [messages, setMessages] = useState([]);
+
+  const send = () => {
+    const message = document.getElementById("chatInput").value;
+    socket.emit("message", { message, id });
+    document.getElementById("chatInput").value = "";
+  };
+  console.log(messages);
+  useEffect(() => {
+    socket = socketIO(ENDPOINT, { transports: ["websocket"] });
+
+    socket.on("connect", () => {
+      alert("Connected to server succesfully!!");
+      setid(socket.id);
+    });
+    console.log(socket);
+    socket.emit("joined", { user });
+
+    socket.on("welcome", (data) => {
+      setMessages([...messages, data]);
+      console.log(data.user, data.message);
+    });
+
+    socket.on("userJoined", (data) => {
+      //delete next two lines
+      const message=`${data.user} has joined the chat`;
+      io.emit("message",{message,id});
+      setMessages([...messages, data]);
+      console.log(data.user, data.message);
+      
+    });
+
+    socket.on("leave", (data) => {
+      setMessages([...messages, data]);
+      console.log(data.user, data.message);
+    });
+
+    return () => {
+      socket.emit("disconnect");
+      socket.off();
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("sendMessage", (data) => {
+      setMessages([...messages, data]);
+      console.log(data.user, data.message, data.id);
+    });
+    return () => {
+      socket.off();
+    };
+  }, [messages]);
+
+  return (
+    <div className="chatpage">
+      <div className="chatcontainer">
+        <div className="header">
+          <img src={logo} alt="logo"></img>
+          <h2>women chat Room</h2>
+        </div>
+        <ReactScrollToBottom className="chatbox">
+          {messages.map((item, i) => (
+            <Message
+              user={item.id === id ? "" : item.user}
+              message={item.message}
+              classs={item.id === id ? "right" : "left"}
+            />
+          ))}
+        </ReactScrollToBottom>
+        <div className="inputBox">
+          <input
+            onKeyPress={(event) => (event.key === "Enter" ? send() : null)}
+            type="text"
+            id="chatInput"
+          />
+          <button onClick={send} className="sendBtn">
+            <img src={sendlogo} alt="Send" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
